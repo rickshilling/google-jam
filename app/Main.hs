@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 import Lib
 import Data.List
@@ -6,10 +8,19 @@ import Data.List as L
 import Data.Tree as T
 import Data.Maybe
 import Data.List (break)
+import Data.Ord
+import Data.Monoid
+import CodeJam
+import Text.Printf
 
 main :: IO ()
-main = mainSolveRopeIntranet --mainR2008_1A
+main = do --mainR2008_1C -- mainSolveRopeIntranet --mainR2008_1A
+  puts "Enter a string"
+  s <- gets
+  puts ("You typed: " ++ s)
 
+puts = putStrLn
+gets = getLine
 --
 
 mainR2008_1A :: IO ()
@@ -203,3 +214,69 @@ type FSZipper = (FSItem, [FSCrumb])
 
 fsUp :: FSZipper -> FSZipper
 fsUp (item, (FSCrumb name ls rs):bs ) = (Folder name (ls ++ [item] ++ rs), bs)
+
+-- Numbers Round 1A 2008 Problem C
+
+p = 3 :: Int -- 3 :: Int -- max number of letters to place on a key
+k = 9 :: Int -- 2 :: Int -- number of keys available
+l = 26 :: Int -- 6 :: Int -- number of letters in alphabet
+frequencies = [1, 1, 1, 100, 100, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 11, 11, 11, 11, 1, 1, 1, 100] :: [Int] --[8, 2, 5, 2, 4, 9] :: [Int]
+
+sortFrequencies fs = (zip [0..] (reverse . sort $ fs)) :: [(Int,Int)]
+
+numberOfPresses fs numKeys = sum $ zipWith (*) (L.map snd sfs) (L.map ((1+) . (flip div numKeys) . fst) sfs)
+  where
+    sfs = sortFrequencies fs
+
+--
+
+countOccurences :: (Ord a) => [a] -> [(a,Int)]
+countOccurences xs = L.map (\x -> (head x, length x)) $ group $ sort xs
+
+
+mainR2008_1C :: IO ()
+mainR2008_1C = do
+  contents <- getContents
+  putStrLn $ contents 
+  --putStrLn $ customProcessContents $ contents trialFunction 
+
+sample_R2008_1C = "2\n3 2 6\n8 2 5 2 4 9\n3 9 26\n1 1 1 100 100 1 1 1 1 1 1 1 1 1 1 1 1 10 11 11 11 11 1 1 1 100"
+
+trialFunction :: String -> String
+trialFunction s = s
+
+customProcessContents :: String -> (String -> String) -> String
+customProcessContents contents f = unlines ["Case #" ++ show x ++ ": " ++ y | (x,y) <- zip [1..] (words contents ) ]
+--customProcessContents contents f = unlines ["Case #" ++ show x ++ ": " ++ y | (x,y) <- zip [1..] (words . customProcessContent $ contents f) ]
+
+{-
+customProcessContent :: String -> (String -> String) -> String
+customProcessContent contents f = processTrial f numTrials trials
+  where
+    numTrials = read . head . lines $ contents
+    trials = tail . lines $ contents
+
+processTrial :: (String -> String) -> Int -> String -> String
+processTrial f numTrials trials = undefined
+
+processContent :: Int -> [String] -> String
+processContent 0 _ = ""
+processContent numTrials (n:xs:ys:zs) = (r2008_1A (myIntRead . words $ xs) (myIntRead . words $ ys)) ++ "\n" ++ processContent (numTrials-1) zs
+-}
+
+-- Online Competition for Veterans 2013 Problem A. Hedgemony
+
+hedgeString = "6\n5\n1 2 3 6 7\n5\n1 2 3 4 7\n3\n7 7 7\n5\n7 8 7 9 9\n5\n5 8 9 9 9\n6\n1 2 2 2 2 2"
+
+hedgemony :: [Double] -> [Double]
+hedgemony (a:b:xs) = reverse $ hedgemonyHelper xs b a []
+  where
+    hedgemonyHelper (c:xs) b a []     = hedgemonyHelper xs c b [a]
+    hedgemonyHelper (d:xs) c b (a:ys) = hedgemonyHelper xs d c [max b (a + c)/2] ++ [a] ++ ys
+    hedgemonyHelper []     c b (a:ys) = [c] ++ [max b (a + c)/2] ++ [a] ++ ys
+
+myHedgemonyFunction :: String -> String
+myHedgemonyFunction s = unwords $ L.map show (hedgemony (mrw s :: [Double]))
+
+hedgemonyAnswer = returnEveryOtherLine hedgeString myHedgemonyFunction
+
