@@ -14,19 +14,17 @@ import CodeJam
 import Text.Printf
 
 main :: IO ()
-main = do --mainR2008_1C -- mainSolveRopeIntranet --mainR2008_1A
-  puts $ returnEveryOtherLine hedgeString myHedgemonyFunction
-  
-{-  
+main = mainR2015_1A
+
+{-
   puts "Enter a string"
   s <- gets
   puts ("You typed: " ++ s)
 -}
-  --
 
 puts = putStrLn
 gets = getLine
---
+
 
 mainR2008_1A :: IO ()
 mainR2008_1A = do
@@ -321,3 +319,9 @@ ovationAnswer = solveOvation ovationSample
 -}
 ovationSampleString = "4\n4 11111\n1 09\n5 110011\n0 1"
 ovationAnswer = processOvation ovationSampleString
+
+mainR2015_1A :: IO ()
+mainR2015_1A = do
+  contents <- getContents
+  putStrLn $ processOvation contents
+  return ()
