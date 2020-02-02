@@ -1,4 +1,10 @@
-module CodeJam (mrw, applyEveryOtherLine, returnEveryOtherLine ) where
+module CodeJam (
+  mrw,
+  applyEveryOtherLine,
+  returnEveryOtherLine,
+  nthOfList) where
+
+import Data.List
 
 {-
 module CodeJam (codeJam, codeJamLiner, mrw, applyEveryOtherLine, returnEveryOtherLine ) where
@@ -40,3 +46,7 @@ applyEveryOtherLine inFile f = helper (tail . lines $ inFile)
 returnEveryOtherLine :: String -> (String -> String) -> String
 returnEveryOtherLine inFile f = unlines ["Case #" ++ show x ++ ": " ++ y | (x,y) <- zip [1..] (applyEveryOtherLine inFile f) ]
 
+nthOfList :: [a] -> Int -> [a]
+nthOfList [] _       = []
+nthOfList xs 0       = []
+nthOfList (xs) (n) =  drop (n-1) (take n xs) ++ nthOfList (drop n xs) n

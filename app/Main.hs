@@ -15,9 +15,14 @@ import Text.Printf
 
 main :: IO ()
 main = do --mainR2008_1C -- mainSolveRopeIntranet --mainR2008_1A
+  puts $ returnEveryOtherLine hedgeString myHedgemonyFunction
+  
+{-  
   puts "Enter a string"
   s <- gets
   puts ("You typed: " ++ s)
+-}
+  --
 
 puts = putStrLn
 gets = getLine
@@ -280,3 +285,39 @@ myHedgemonyFunction s = unwords $ L.map show (hedgemony (mrw s :: [Double]))
 
 hedgemonyAnswer = returnEveryOtherLine hedgeString myHedgemonyFunction
 
+
+-- Qualification round 2017 Problem A. Oversized Pancake Flipper
+
+myFlip :: Char -> Char
+myFlip '-'='+'
+myFlip '+'='-'
+
+flipper :: String -> Int -> Int
+flipper xs k = helper xs 0
+  where
+    helper [] a = a
+    helper ('+':ys) a = helper ys a
+    helper ('-':ys) a = undefined
+
+-- Qualification round 2015 Problem A. Standing Ovation
+solveOvation :: [Integer] -> Integer
+solveOvation shynessList = helper shynessList 0 0 0
+  where
+    helper []     currentShyness numStanding numFriends = numFriends
+    helper (x:xs) currentShyness numStanding numFriends =
+      helper xs (currentShyness+1) (numStanding + numNewFriends + x) (numNewFriends + numFriends)
+      where
+        numNewFriends = max 0 (currentShyness - numStanding)
+
+
+processOvation :: String -> String
+processOvation inString = unlines ["Case #" ++ show x ++ ": " ++ y | (x,y) <- zip [1..] ovationResult ]
+  where
+    ovationResult = (L.map show (L.map solveOvation ((L.map (L.map (\x -> read [x] :: Integer )) (nthOfList  (tail . words $  inString) (2::Int))))))
+
+{-
+ovationSample = [1] --[1,1,1,1,1] --[1,1,0,0,1,1] --[0,9]
+ovationAnswer = solveOvation ovationSample
+-}
+ovationSampleString = "4\n4 11111\n1 09\n5 110011\n0 1"
+ovationAnswer = processOvation ovationSampleString
